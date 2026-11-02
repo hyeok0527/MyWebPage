@@ -2,7 +2,7 @@
 public/
 resources/
 exampleSite/resources/
-
+.DS_Store
 # Binaries for programs and plugins
 *.exe
 *.exe~
