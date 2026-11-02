@@ -1,44 +1,19 @@
 ---
-title: "Build a site that feels unmistakably yours."
-description: "A modern, flexible Hugo theme for blogs, documentation, portfolios, and more."
-lastmod: 2026-08-30
-heroLead: "Blowfish gives you expressive layouts, thoughtful defaults, and practical content building blocks, so you can focus on the thing you want to say."
-heroButtons:
-  - label: "Get started"
-    url: "/docs/installation/"
-  - label: "Explore the docs"
-    url: "/docs/"
-    style: "outline"
-  - label: "Star on GitHub"
-    url: "https://github.com/nunocoracao/blowfish"
-    style: "outline"
-    github: "nunocoracao/blowfish"
-heroImage: "images/v3/welcome.png"
+title: "안녕하세요, hyeok0527입니다."
+description: "인공지능과 웹 개발을 공부하는 학생의 포트폴리오"
 ---
 
-{{< stats >}}
-{{< stat value="5" label="Homepage layouts" >}}Choose the structure that suits the site you are making.{{< /stat >}}
-{{< stat value="40+" label="Shortcodes" >}}Compose expressive content without maintaining one-off templates.{{< /stat >}}
-{{< stat value="100%" label="Your content" >}}Portable Markdown, familiar Hugo configuration, and no lock-in.{{< /stat >}}
-{{< /stats >}}
+인공지능과 웹 개발을 공부하며 배운 내용을 직접 구현하고 있습니다.
+이 사이트에는 프로젝트 결과물과 학습 과정을 기록합니다.
 
-{{< feature-grid >}}
-{{< feature icon="list-check" title="Make it yours" url="/docs/configuration/" >}}
-A coherent system of layouts, colours, typography, and content controls.
-{{< /feature >}}
-{{< feature icon="code" title="Compose faster" url="/docs/shortcodes/" label="Browse shortcodes" >}}
-Useful components for richer stories, clearer documentation, and less custom glue.
-{{< /feature >}}
-{{< feature icon="heart" title="Made in the open" url="/users/" >}}
-Explore real sites, community contributions, and patterns that hold up in production.
-{{< /feature >}}
-{{< feature icon="wand-magic-sparkles" title="Built for AI agents" url="/docs/installation/#agent-skill" label="Install the skill" >}}
-Blowfish ships an agent skill that teaches Claude Code and other coding agents how to install, configure, and build with the theme.
-{{< /feature >}}
-{{< /feature-grid >}}
+## 관심 분야
 
-{{< alert >}}
-**Blowfish v3.5 is available.** Start a new site with `npx blowfish-tools new <site>` or [upgrade an existing site]({{< ref "guides/202608-upgrade-to-blowfish-v3" >}}).
+- 인공지능을 활용한 서비스 개발
+- 웹 서비스 구현과 배포
+- 사용자에게 필요한 정보를 전달하는 인터페이스
 
-**Working with a coding agent?** In Claude Code, run `/plugin marketplace add nunocoracao/blowfish`, then `/plugin install blowfish@blowfish`. For another agent that reads project skills, copy the [`blowfish` skill folder](https://github.com/nunocoracao/blowfish/tree/main/.claude/skills/blowfish) into your site at `.claude/skills/blowfish/`.
-{{< /alert >}}
+## 포트폴리오 둘러보기
+
+- [자기소개]({{< relref "about" >}})
+- [프로젝트]({{< relref "projects" >}})
+- [GitHub](https://github.com/hyeok0527)
