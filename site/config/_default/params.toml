@@ -24,7 +24,8 @@ disableImageOptimizationMD = false
 disableTextInHeader = false
 # backgroundImageWidth = 1200
 
-backgroundCanvas = false
+defaultBackgroundImage = "images/v3/site-background.svg"
+backgroundCanvas = true
 
 hotlinkFeatureImage = false
 # imagePosition = "50% 50%"
