@@ -1,192 +1,95 @@
-English | [Français](https://github.com/nunocoracao/blowfish/blob/main/README.fr.md) | [Deutsch](https://github.com/nunocoracao/blowfish/blob/main/README.de.md) | [Português (PT)](https://github.com/nunocoracao/blowfish/blob/main/README.pt-pt.md) | [Português (BR)](https://github.com/nunocoracao/blowfish/blob/main/README.pt-br.md) | [Español](https://github.com/nunocoracao/blowfish/blob/main/README.es.md) | [日本語](https://github.com/nunocoracao/blowfish/blob/main/README.ja.md) | [简体中文](https://github.com/nunocoracao/blowfish/blob/main/README.zh-cn.md) | [Indonesian](https://github.com/nunocoracao/blowfish/blob/main/README.id.md)
-# Blowfish
-[![Netlify Status](https://api.netlify.com/api/v1/badges/6e5256d4-3148-4d69-879c-310341020fe9/deploy-status)](https://app.netlify.com/sites/snazzy-dango-efb2ec/deploys)
-[![Minimum Hugo Version](https://img.shields.io/static/v1?label=min-HUGO-version&message=0.162.0&color=blue&logo=hugo)](https://github.com/gohugoio/hugo/releases/tag/v0.162.0)
-[![GitHub](https://img.shields.io/github/license/nunocoracao/blowfish)](https://github.com/nunocoracao/blowfish/blob/main/LICENSE)
-[![Blowfish](https://img.shields.io/badge/Hugo--Themes-@Blowfish-blue)](https://themes.gohugo.io/themes/blowfish/)
-![code-size](https://img.shields.io/github/languages/code-size/nunocoracao/blowfish)
+# 권혁의 개인 포트폴리오
 
-Blowfish is designed to be a powerful, lightweight theme for [Hugo](https://gohugo.io). It's built using Tailwind CSS with a clean and minimalist design that prioritises to your content.
+Hugo와 Blowfish를 활용해 자기소개와 프로젝트 경험을 정리한 사이트입니다.
 
-![blowfish screenshot](https://github.com/nunocoracao/blowfish/blob/main/images/screenshot.png?raw=true)
+- 공개 사이트: https://hyeok0527.github.io/MyWebPage/
+- 저장소: https://github.com/hyeok0527/MyWebPage
+- Actions: https://github.com/hyeok0527/MyWebPage/actions
 
+## 주요 수정 위치
 
-🌏 [Demo site](https://blowfish.page/)  
-📑 [Theme documentation](https://blowfish.page/docs/)  
-🐛 [Bug reports & issues](https://github.com/nunocoracao/blowfish/issues)  
-💡 [Questions & feature requests](https://github.com/nunocoracao/blowfish/discussions)
+| 대상 | 경로 |
+|---|---|
+| 홈 본문 | `site/portfolio-content/_index.md` |
+| 자기소개 | `site/portfolio-content/about/index.md` |
+| 프로젝트 목록 | `site/portfolio-content/projects/_index.md` |
+| 프로젝트 상세 | `site/portfolio-content/projects/mywebpage/index.md` |
+| 프로필 | `site/config/_default/languages.en.toml` |
+| 메뉴 | `site/config/_default/menus.en.toml` |
+| 화면 설정 | `site/config/_default/params.toml` |
+| 기본 설정·콘텐츠 경로 | `site/config/_default/hugo.toml` |
+| 홈 템플릿 | `site/layouts/index.html` |
+| 운영 설정 | `site/pages.json` |
+| 배포 구성 | `.github/workflows/hugo-pages.yml` |
 
+원본 예제는 `site/content/`에 보존합니다. 공개 사이트는 `contentDir = "portfolio-content"` 설정으로 새 콘텐츠만 빌드합니다. 앞으로 글을 수정할 때는 **site/portfolio-content/**를 사용하세요.
+기존 언어 파일명은 en을 유지하지만 locale과 isoCode는 ko이며, 다른 예제 언어는 비활성화합니다.
 
-<a href="https://www.buymeacoffee.com/nunocoracao" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+## 도구 버전과 설치
 
+기존 워크플로에 지정된 버전: Hugo Extended 0.167.0, Dart Sass 1.105.0, Python 3.12, Node.js 24, Go 1.27.1.
+이는 저장소 설정에 적힌 값이며 로컬 설치·실행을 검증했다는 뜻은 아닙니다.
+로컬 작업 시 각 도구의 공식 설치 안내를 따라 해당 버전을 설치하고 PATH에 추가하세요.
 
-## Features
+- Hugo: https://gohugo.io/installation/
+- Sass: https://sass-lang.com/install/
+- Python: https://www.python.org/downloads/
+- Node.js: https://nodejs.org/en/download
+- Go: https://go.dev/doc/install
 
-- Fully responsive layout built with Tailwind CSS 4
-- Multiple colour schemes (or fully customise your own)
-- Dark mode (forced on/off or auto-switching with user toggle)
-- Multiple homepage layouts including a product-style landing page with hero image, stats, and feature grids
-- Floating glass header with ⌘K / Ctrl+K search shortcut
-- Global background canvas with heroes that dissolve into it on scroll
-- Reading progress bar for articles
-- Interactive homepage layout switcher for live previews
-- Agent skill so AI coding agents (like Claude Code) can install and configure the theme for you
-- Print-friendly pages with dedicated print styles
-- Highly customisable configuration
-- Firebase integration to support dynamic data
-- Views count & like mechanism
-- Related articles
-- Multiple authors
-- Series of articles
-- Date and weight based article sorting
-- Zen mode for article reading
-- Flexible with any content types, taxonomies and menus
-- Header and footer menus
-- Nested menus & sub-navigation menu
-- Scrollable table of contents
-- Multilingual content support including support for RTL languages
-- Ability to link to posts on third-party websites
-- 40+ shortcodes including Gallery, Timeline, GitHub cards, Carousels, Stats, Feature grids, Steps, and CTA buttons
-- GitHub Alerts syntax, 15 types, collapsible support
-- Buy Me a Coffee & Ko-fi integration
-- Client-side site search powered by Fuse.js
-- Diagrams and visualisations using Mermaid
-- Charts using Chart.js
-- TypeIt integration
-- Youtube embeds with performance improvements
-- Mathematical notation using KaTeX
-- SVG icons from FontAwesome 6
-- Automatic image resizing using Hugo Pipes
-- Heading anchors, Tables of Contents, Code copy, Buttons, Badges and more
-- HTML and Emoji support in articles 🎉
-- SEO friendly with links for sharing to social media
-- Fathom Analytics and Google Analytics support
-- RSS feeds, Favicons and comments support
-- Advanced customisation using simple Tailwind colour definitions and styles
-- Optimised for performance and accessibility with perfect Lighthouse scores
-- Fully documented with regular updates
+## 설치 후 빌드
 
----
+저장소 루트(MyWebPage 폴더)에서 실행합니다.
 
-![blowfish logo](https://github.com/nunocoracao/blowfish/blob/main/logo.png?raw=true)
-
-## Documentation
-
-Blowfish has [extensive documentation](https://blowfish.page/docs/) that covers all aspects of the theme. Be sure to [read the docs](https://blowfish.page/docs/) to learn more about how to use the theme and its features.
-
----
-
-## Installation
-
-Blowfish supports several installation methods - as a git submodule, a Hugo Module, or as a completely manual install.
-
-Detailed instructions for each method can be found in the [Installation](https://blowfish.page/docs/installation) docs. You should consult the documentation for the simplest setup experience. Below is a quick start guide using submodules if you are using git, or Hugo modules if you're already confident installing Hugo themes.
-
-### Quick start with an AI agent
-
-Blowfish ships an [agent skill](https://github.com/nunocoracao/blowfish/tree/main/.claude/skills/blowfish) that teaches AI coding agents — like Claude Code — how to install, configure, and build sites with the theme. Install it from the Blowfish plugin marketplace in Claude Code:
-
-```shell
-/plugin marketplace add nunocoracao/blowfish
-/plugin install blowfish@blowfish
+```bash
+python .github/pages_build.py --dependencies
+python .github/pages_build.py --build
 ```
 
-Or simply copy the skill folder into your site repository at `.claude/skills/blowfish/` — agents pick up project skills automatically. Then ask your agent to set up Blowfish for you.
+기존 배포 스크립트가 site/pages.json과 site/config/ 설정을 사용하며 결과를 public/에 만듭니다.
+일부 환경에서 python 명령이 없다면 python3를 사용하세요.
+빌드 후 로컬 확인은 다음과 같습니다.
 
-### Quick start using Blowfish Tools
-
-> **Note:** Ensure you have **Node.js**, **Git** and **Hugo** installed, and that you have created a new Hugo project before proceeding.
-
-Blowfish Tools is a CLI that helps you get started with Blowfish. It will create a new Hugo project, install the theme and set up the theme configuration files for you. Please [report any issues you find](https://github.com/nunocoracao/blowfish-tools).
-
-Install the CLI tool globally using npm (or other package manager):
-```shell
-npm i -g blowfish-tools
+```bash
+cd site
+hugo server --config pages.json --baseURL http://localhost:1313/MyWebPage/ --appendPort=false
 ```
 
-Then run the command `blowfish-tools` to start an interactive run which will guide you through creation and configuration use-cases.
-```shell
-blowfish-tools
-```
+브라우저에서 http://localhost:1313/MyWebPage/ 를 엽니다. 로컬 실행 명령은 적용 후 사용자 환경에서 확인해야 합니다.
 
-You can also run the command `blowfish-tools new` to create a new Hugo project and install the theme in one go. Check the CLI help for more information.
-```shell
-blowfish-tools new mynewsite
-```
+## 수정과 재배포
 
-### Quick start using git submodules
+1. 콘텐츠의 `[직접 입력: ...]`을 실제 내용으로 교체하고 사실관계를 검토합니다.
+2. 변경 내용을 diff로 확인하고 의미 있는 작업 단위로 commit합니다.
+3. main에 push합니다. 다른 브랜치에서 작업했다면 main에 병합합니다.
+4. Actions에서 해당 커밋의 build와 deploy 성공을 확인합니다.
+5. 공개 사이트에서 소개, 프로젝트, 메뉴와 자산이 정상인지 확인합니다.
 
-> **Note:** Ensure you have **Git** and **Hugo** installed, and that you have created a new Hugo project before proceeding.
+GitHub Settings → Pages → Source는 GitHub Actions를 사용합니다.
+수업 제공 준비 스크립트를 재실행해 사이트를 다시 생성하면 사용자 수정이 덮어써질 수 있으므로 일반 콘텐츠 수정에는 재실행하지 않습니다.
 
-1. From your project directory, initialise git:
+## 검증 계획
 
-   ```shell
-   git init
-   ```
+아래는 검사 계획이며 완료 기록이 아닙니다. 실제 검사 후 결과와 근거를 보고서에 기록하세요.
 
-2. Configure Blowfish as a git submodule:
+- 배포: main push 자동 실행, Hugo 빌드, Pages 배포 상태.
+- 경로·자산: 내부 URL 직접 접속과 새로고침, CSS·이미지 로딩, localhost 잔존 여부.
+- 메뉴·링크: 소개·프로젝트·GitHub·홈 복귀와 뒤로 가기.
+- 반응형: 1440px·768px·390px, 폭 변경, 200% 확대.
+- 키보드: Tab 초점, Enter 실행, 메뉴 닫기와 초점 이동.
+- 언어: 생성된 HTML의 lang이 ko 계열인지 확인.
 
-   ```shell
-   git submodule add -b main https://github.com/nunocoracao/blowfish.git themes/blowfish
-   ```
+현재는 텍스트 중심 구성이며 프로필·본문 이미지를 사용하지 않습니다. 실제 사이트에 이미지를 추가하면 표시, 크기 대응과 대체 설명을 검사하세요.
 
-3. In the root folder of your website, delete the `hugo.toml` file that was generated by Hugo. Copy the `*.toml` config files from the theme into your `config/_default/` folder.
+## 출처와 AI 활용
 
-   You will find these theme config files in the Hugo cache directory, or [download a copy](https://github.com/nunocoracao/blowfish/releases/latest/download/config-default.zip) from GitHub.
+- 테마: Blowfish — https://github.com/nunocoracao/blowfish
+- 원본 LICENSE 및 필요한 저작권 고지는 보존합니다. 테마 자산과 외부 자료는 해당 이용 조건을 따릅니다.
+- 사이트 준비·배포: 수업 제공 Python 스크립트와 기존 워크플로를 활용합니다.
+- 개인 콘텐츠: 본인의 실제 활동을 바탕으로 작성하고 사실관계를 확인합니다.
+- AI 도움: BAZE Mindlogic Super Agent를 활용해 파일 구성, 문구 초안, 설정 정리와 문제 점검을 지원받았습니다. 테마와 배포 스크립트를 직접 처음부터 개발한 것으로 주장하지 않습니다.
+- AI 활용 날짜·실제 요청·채택 판단·반영 경로·검증 결과는 제출 보고서에 기록합니다. 모델명 미표시 시 미표시로 적습니다.
 
-4. Follow the [Getting Started](https://blowfish.page/docs/getting-started/) instructions to configure your website.
+## 제출 기록
 
-### Quick start using Hugo
-
-> **Note:** Ensure you have **Go** and **Hugo** installed, and that you have created a new Hugo project before proceeding.
-
-1. From your project directory, initialise Hugo Modules:
-
-   ```shell
-   hugo mod init github.com/<username>/<repo-name>
-   ```
-
-2. Create `config/_default/module.toml` and add the following:
-
-   ```toml
-   [[imports]]
-   path = "github.com/nunocoracao/blowfish/v3"
-   ```
-
-3. Start your server using `hugo server` and the theme will be downloaded automatically.
-
-4. In the root folder of your website, delete the `hugo.toml` file that was generated by Hugo. Copy the `*.toml` config files from the theme into your `config/_default/` folder.
-
-   > **Note:** Do not overwrite the `module.toml` file you created above!
-   
-   You will find these theme config files in the Hugo cache directory, or [download a copy](https://github.com/nunocoracao/blowfish/releases/latest/download/config-default.zip) from GitHub.
-
-5. Follow the [Getting Started](https://blowfish.page/docs/getting-started/) instructions to configure your website.
-
-### Installing theme updates
-
-As new releases are posted, you can update the theme using Hugo. Simply run `hugo mod get -u` from your project directory and the theme will automatically update to the latest release.
-
-Detailed [update instructions](https://blowfish.page/docs/installation/#installing-updates) are available in the docs.
-
-### Upgrading from v2 to v3
-
-Blowfish v3 is fully backwards compatible: every new feature is opt-in and no configuration options or templates were removed. Git submodule and manual installs upgrade as usual with no changes; Hugo module users just change the import path in `config/_default/module.toml` from `github.com/nunocoracao/blowfish/v2` to `github.com/nunocoracao/blowfish/v3` and run `hugo mod get -u`. See the [upgrade instructions](https://blowfish.page/docs/installation/#upgrading-from-v2-to-v3) for details.
-
----
-
-## Contributing
-
-Blowfish is expected to evolve over time. I intend to keep adding features and making changes as required.
-
-Feel free to get in touch with any issues or suggestions for new features you'd like to see.
-
-- 🐛 **Bug reports & issues:** Use [GitHub Issues](https://github.com/nunocoracao/blowfish/issues)
-- 💡 **Ideas for new features:** Open a discussion on [GitHub Discussions](https://github.com/nunocoracao/blowfish/discussions)
-- 🙋‍♀️ **General questions:** Head to [GitHub Discussions](https://github.com/nunocoracao/blowfish/discussions)
-
-If you're able to fix a bug or implement a new feature, I welcome PRs for this purpose. Learn more in the [contributing guidelines](https://github.com/nunocoracao/blowfish/blob/main/CONTRIBUTING.md).
-
----
-
-<a rel="me" href="https://masto.ai/@blowfish">Mastodon</a>
+[직접 입력: 최종 main 전체 SHA, 커밋 URL, 성공한 Actions URL과 상태, 로컬 사용 버전, 검증 일시. 보고서 최종본과 일치시키세요.]

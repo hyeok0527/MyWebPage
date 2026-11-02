@@ -3,9 +3,10 @@
 # https://blowfish.page/docs/getting-started/
 
 
-baseURL = "https://localhost:1313"
+baseURL = "https://hyeok0527.github.io/MyWebPage/"
+contentDir = "portfolio-content"
 defaultContentLanguage = "en"
-disableLanguages = [] #to allow translation work requiring shipping to production
+disableLanguages = ["de", "es", "fr", "it", "ja", "pt-br", "pt-pt", "zh-cn"]
 
 # pluralizeListTitles = "true" # hugo function useful for non-english languages, find out more in  https://gohugo.io/getting-started/configuration/#pluralizelisttitles
 
@@ -18,7 +19,6 @@ buildFuture = false
 
 enableEmoji = true
 
-googleAnalytics = "G-PEDMYR1V0K"
 
 [pagination]
   pagerSize = 102
