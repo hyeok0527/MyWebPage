@@ -10,7 +10,7 @@ defaultAppearance = "dark" # valid options: light or dark
 autoSwitchAppearance = true
 
 enableA11y = true
-enableSearch = true
+enableSearch = false
 enableCodeCopy = true
 enableStructuredBreadcrumbs = true
 
@@ -22,6 +22,7 @@ mainSections = ["projects"]
 disableImageOptimization = false
 disableImageOptimizationMD = false
 disableTextInHeader = false
+
 # backgroundImageWidth = 1200
 
 defaultBackgroundImage = "images/v3/site-background.svg"

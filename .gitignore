@@ -55,3 +55,10 @@ ga-pageviews.csv
 **/resources/_gen/
 **/.hugo_build.lock
 /.github-pages-setup-backups/
+
+# Personal OS files and generated local outputs
+.DS_Store
+Thumbs.db
+.pages-tools/
+site/resources/_gen/
+site/.hugo_build.lock
