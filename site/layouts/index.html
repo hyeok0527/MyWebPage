@@ -1,15 +1,61 @@
 {{ define "main" }}
-  {{ if .Site.Params.homepage.layoutSwitcher | default false }}
-    {{ partial "home/layout-switcher.html" . }}
-  {{ else }}
-    {{ $partial := print "home/" .Site.Params.homepage.layout ".html" }}
-    {{ if templates.Exists ( printf "partials/%s" $partial ) }}
-      {{ partial $partial . }}
-    {{ else }}
-      {{ partial "home/profile.html" . }}
-    {{ end }}
-  {{ end }}
-  <section>
-    {{ partial "recent-articles/main.html" . }}
-  </section>
+<style>
+.pf-home{--pf-border:rgba(148,163,184,.3);--pf-panel:rgba(100,116,139,.09);width:100%;max-width:1100px;margin:auto;isolation:isolate}
+.pf-slide{min-height:85svh;display:flex;flex-direction:column;justify-content:center;padding:5rem 0;scroll-margin-top:5rem;border-bottom:1px solid var(--pf-border);box-sizing:border-box}
+.pf-hero{display:grid;grid-template-columns:minmax(160px,260px) 1fr;gap:clamp(2rem,6vw,5rem);align-items:center}
+.pf-photo{width:100%;aspect-ratio:1;border-radius:50%;object-fit:cover;border:1px solid var(--pf-border);box-shadow:0 18px 65px rgba(0,0,0,.18)}
+.pf-monogram{display:grid;place-items:center;font-size:4rem;background:var(--pf-panel)}
+.pf-eyebrow{font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;opacity:.7;margin:0 0 1.2rem}
+.pf-home h1{font-size:clamp(2.3rem,5vw,4.5rem);line-height:1.15;letter-spacing:-.045em;margin:0 0 1.3rem;font-weight:750}
+.pf-home h2{font-size:clamp(2rem,4vw,3.4rem);line-height:1.2;letter-spacing:-.035em;margin:0 0 2rem;font-weight:700}
+.pf-lead{font-size:clamp(1.05rem,2vw,1.35rem);line-height:1.9;max-width:44rem;opacity:.86;margin:0}
+.pf-hint{margin-top:2.5rem;display:inline-block;font-size:.85rem;text-decoration:none;opacity:.7}
+.pf-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.2rem}
+.pf-topic{padding:1.6rem;border-top:1px solid var(--pf-border)}
+.pf-topic h3{font-size:1.25rem;margin:0 0 .8rem;font-weight:650}
+.pf-topic p{line-height:1.8;margin:0;opacity:.8}
+.pf-card{position:relative;display:flex;flex-direction:column;justify-content:space-between;min-height:230px;padding:1.8rem;border:1px solid var(--pf-border);border-radius:24px;background:var(--pf-panel);text-decoration:none!important;color:inherit!important;transition:transform .3s,border-color .3s,box-shadow .3s,background .3s}
+.pf-card h3{font-size:1.65rem;margin:1.8rem 0 1rem;font-weight:650}
+.pf-card p{font-size:.95rem;line-height:1.8;margin:0;opacity:.8}
+.pf-card .pf-arrow{align-self:flex-end;font-size:1.6rem;transition:transform .3s}
+.pf-card:hover,.pf-card:focus-visible{transform:translateY(-9px);border-color:#818cf8;background:rgba(129,140,248,.12);box-shadow:0 22px 55px rgba(0,0,0,.15)}
+.pf-card:hover .pf-arrow,.pf-card:focus-visible .pf-arrow{transform:translate(4px,-4px)}
+.pf-card:focus-visible,.pf-hint:focus-visible{outline:3px solid #818cf8;outline-offset:5px}
+@media(min-width:769px){html:has(.pf-home){scroll-snap-type:y proximity}.pf-slide{scroll-snap-align:start}}
+@media(max-width:768px){.pf-slide{min-height:80svh;padding:4rem 0}.pf-hero{grid-template-columns:1fr;gap:2rem}.pf-photo{width:160px}.pf-grid{grid-template-columns:1fr}.pf-card{min-height:180px}.pf-topic{padding:1.4rem 0}}
+@media(prefers-reduced-motion:no-preference){html:has(.pf-home){scroll-behavior:smooth}.pf-animate{opacity:0;transform:translateY(50px);transition:opacity .9s ease,transform .9s cubic-bezier(.22,1,.36,1)}.pf-animate.pf-visible{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){html:has(.pf-home){scroll-snap-type:none;scroll-behavior:auto}.pf-card,.pf-arrow{transition:none!important}.pf-card:hover,.pf-card:focus-visible{transform:none}}
+@media print{.pf-slide{min-height:auto;padding:2rem 0}.pf-animate{opacity:1!important;transform:none!important}}
+</style>
+<div class="pf-home">
+<section class="pf-slide" id="intro" aria-labelledby="pf-title">
+<div class="pf-hero">
+{{ $photo := false }}
+{{ with .Site.Params.author.image }}{{ if not (or (strings.HasPrefix . "http://") (strings.HasPrefix . "https://")) }}{{ with resources.Get . }}{{ $photo = . }}{{ end }}{{ end }}{{ end }}
+{{ if $photo }}<img class="pf-photo" src="{{ $photo.RelPermalink }}" alt="{{ .Site.Params.author.name }}의 프로필 사진" width="260" height="260" fetchpriority="high">{{ else }}<div class="pf-photo pf-monogram" role="img" aria-label="프로필 이미지 대신 표시한 이니셜">H</div>{{ end }}
+<div><p class="pf-eyebrow">Portfolio / Introduction</p><h1 id="pf-title">안녕하세요,<br>권혁입니다.</h1><p class="pf-lead">전북대학교 컴퓨터인공지능학부에 재학 중입니다.<br>배운 내용을 직접 구현하며, 프로젝트와 문제 해결 과정을 기록합니다.</p><a class="pf-hint" href="#interests">아래로 스크롤하여 더 알아보기 ↓</a></div>
+</div>
+</section>
+<section class="pf-slide" id="interests" aria-labelledby="pf-interests"><div class="pf-reveal"><p class="pf-eyebrow">01 / Interests</p><h2 id="pf-interests">관심 분야</h2><div class="pf-grid">
+<div class="pf-topic"><h3>인공지능</h3><p>인공지능을 활용한 서비스 개발에 관심이 있습니다.</p></div>
+<div class="pf-topic"><h3>웹 개발</h3><p>웹 서비스를 직접 구현하고 배포하는 과정을 학습합니다.</p></div>
+<div class="pf-topic"><h3>프로젝트 기록</h3><p>구현 과정과 문제 해결 경험을 정리하고 공유합니다.</p></div>
+</div></div></section>
+<section class="pf-slide" id="explore" aria-labelledby="pf-explore"><div class="pf-reveal"><p class="pf-eyebrow">02 / Explore</p><h2 id="pf-explore">포트폴리오 둘러보기</h2><div class="pf-grid">
+<a class="pf-card" href="{{ "about/" | relURL }}"><div><h3>자기소개</h3><p>관심 분야와 사용 기술,<br>앞으로의 학습 목표를 소개합니다.</p></div><span class="pf-arrow" aria-hidden="true">↗</span></a>
+<a class="pf-card" href="{{ "projects/" | relURL }}"><div><h3>프로젝트</h3><p>직접 만든 결과물과<br>구현·문제 해결 과정을 확인하세요.</p></div><span class="pf-arrow" aria-hidden="true">↗</span></a>
+<a class="pf-card" href="https://github.com/hyeok0527"><div><h3>GitHub</h3><p>소스 코드와<br>작업 이력을 확인하세요.</p></div><span class="pf-arrow" aria-hidden="true">↗</span></a>
+</div></div></section>
+</div>
+<script>
+(function(){
+function init(){
+const root=document.querySelector('.pf-home');if(!root)return;
+if(!('IntersectionObserver' in window)||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+const observer=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('pf-visible');observer.unobserve(e.target)}})},{threshold:0,rootMargin:'0px 0px -35px 0px'});
+root.querySelectorAll('.pf-reveal').forEach(function(el){if(el.getBoundingClientRect().top<window.innerHeight-35)return;el.classList.add('pf-animate');observer.observe(el);el.addEventListener('focusin',function(){el.classList.add('pf-visible');observer.unobserve(el)})});
+window.addEventListener('beforeprint',function(){root.querySelectorAll('.pf-animate').forEach(function(el){el.classList.add('pf-visible')})});
+}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script>
 {{ end }}
