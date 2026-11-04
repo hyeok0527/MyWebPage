@@ -8,13 +8,13 @@ title = "hyeok | 포트폴리오"
   isoCode = "ko"
   rtl = false
   dateFormat = "2006.01.02"
-
+  #logo = "img/blowfish_logo_transparent.png"
   description = "인공지능과 웹 개발을 공부하는 학생의 포트폴리오"
 
 [params.author]
   name = "hyeok0527"
-
-
+  email = "khkh5270527@gmail.com"
+  image = "img/profile.jpeg"
   headline = "배운 내용을 직접 구현하며 성장하는 컴퓨터인공지능학부 학생"
   bio = "인공지능과 웹 개발을 공부하고, 프로젝트와 학습 과정을 기록합니다."
   links = [
