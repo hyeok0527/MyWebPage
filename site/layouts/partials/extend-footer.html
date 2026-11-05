@@ -1,1 +1,50 @@
-{{/* Home animation is now implemented in layouts/index.html. */}}
+{{ if and .IsPage (or (eq .Section "projects") (eq .Section "about")) }}
+<style>
+.article-content.ppt-content>.ppt-section{min-height:70svh;padding:clamp(2rem,7vh,5rem) 0;box-sizing:border-box;scroll-margin-top:100px}
+.article-content.ppt-content>.ppt-section>h2:first-child{margin-top:0}
+@media(min-width:900px) and (prefers-reduced-motion:no-preference){
+.ppt-content.ppt-active>.ppt-section{will-change:transform,opacity,filter}
+}
+@media(max-width:899px){.article-content.ppt-content>.ppt-section{min-height:0;padding:2rem 0}}
+@media print{.article-content.ppt-content>.ppt-section{min-height:0!important;filter:none!important;opacity:1!important;transform:none!important;padding:1rem 0!important}}
+</style>
+<script>
+(()=>{
+const start=()=>{
+ const body=document.querySelector('.article-content');if(!body)return;
+ const nodes=Array.from(body.childNodes);if(!nodes.some(n=>n.nodeType===1&&n.tagName==='H2'))return;
+ let section=null;const sections=[];
+ nodes.forEach(node=>{
+  if(node.nodeType===1&&node.tagName==='H2'){
+   section=document.createElement('section');section.className='ppt-section';
+   body.insertBefore(section,node);sections.push(section);
+  }
+  if(section)section.appendChild(node);
+ });
+ body.classList.add('ppt-content');
+ const media=matchMedia('(min-width:900px) and (prefers-reduced-motion:no-preference)');
+ let queued=false;
+ function paint(){
+  queued=false;
+  if(!media.matches){body.classList.remove('ppt-active');sections.forEach(s=>{s.style.opacity='';s.style.filter='';s.style.transform=''});return}
+  body.classList.add('ppt-active');const h=innerHeight;
+  sections.forEach(s=>{
+   const r=s.getBoundingClientRect();
+   // Incoming section rises and sharpens; outgoing section gently blurs.
+   const incoming=Math.max(0,Math.min(1,(r.top-h*.18)/(h*.72)));
+   const outgoing=Math.max(0,Math.min(1,(h*.22-r.bottom)/(h*.45)));
+   const d=Math.max(incoming,outgoing);
+   s.style.opacity=String(1-d*.55);
+   s.style.filter='blur('+ (d*4).toFixed(2)+'px)';
+   s.style.transform='translateY('+(incoming*65-outgoing*20).toFixed(2)+'px)';
+   if(s.contains(document.activeElement)){s.style.opacity='1';s.style.filter='none';s.style.transform='none'}
+  });
+ }
+ function request(){if(!queued){queued=true;requestAnimationFrame(paint)}}
+ addEventListener('scroll',request,{passive:true});addEventListener('resize',request,{passive:true});
+ document.addEventListener('focusin',request);media.addEventListener('change',request);paint();
+};
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+})();
+</script>
+{{ end }}
