@@ -1,5 +1,7 @@
 {{ if .IsPage }}
 <style>
+.article-content.ppt-content p{margin-block:.6em}
+
 .article-content.ppt-content{font-size:clamp(1.05rem,1rem + .3vw,1.2rem);line-height:1.7;overflow-wrap:anywhere}
 .article-content.ppt-content>.ppt-section{padding:1.5rem 0;scroll-margin-top:2rem}
 .article-content.ppt-content>.ppt-section+ .ppt-section{border-top:1px solid rgba(148,163,184,.25)}
@@ -9,7 +11,7 @@
 .article-content.ppt-content ul,.article-content.ppt-content ol{margin-block:.7em}
 .article-content.ppt-content h3{margin-top:1.25em;margin-bottom:.5em}
 .article-content.ppt-about{font-size:clamp(1.125rem,1rem + .5vw,1.4rem);line-height:1.8}
-.article-content.ppt-about>.ppt-section{min-height:75svh;display:flex;flex-direction:column;justify-content:center;padding:2rem 0}
+.article-content.ppt-about>.ppt-section{min-height:78svh;display:flex;flex-direction:column;justify-content:center;padding:2rem 0}
 .ppt-section>*{max-width:100%}
 .ppt-section pre{overflow-x:auto}
 @media(max-width:899px){.article-content.ppt-about>.ppt-section{min-height:55svh;padding:1.75rem 0}}
@@ -21,27 +23,47 @@ const body=document.querySelector('.article-content');if(!body||body.classList.c
 const about=/\/about(?:\/|$)/.test(location.pathname);const project=/\/projects\//.test(location.pathname);if(!about&&!project)return;
 const nodes=Array.from(body.childNodes),sections=[];if(!nodes.some(n=>n.nodeType===1&&n.tagName==='H2'))return;
 let current=null;nodes.forEach(n=>{if(n.nodeType===1&&n.tagName==='H2'){current=document.createElement('section');current.className='ppt-section';body.insertBefore(current,n);sections.push(current)}if(current)current.appendChild(n)});
-body.classList.add('ppt-content');if(about)body.classList.add('ppt-about');
+body.classList.add('ppt-content');body.classList.add('ppt-about');
 const motion=matchMedia('(prefers-reduced-motion:no-preference)'),desktop=matchMedia('(min-width:900px)');
 let pending=false,lockedUntil=0,total=0,last=0,sign=0;
 function paint(){pending=false;const h=innerHeight;sections.forEach(s=>{if(!motion.matches){s.style.opacity='';s.style.filter='';s.style.transform='';return}const old=s.style.transform;s.style.transform='none';const r=s.getBoundingClientRect();s.style.transform=old;const incoming=Math.max(0,Math.min(1,(r.top-h*.3)/(h*.65)));const outgoing=Math.max(0,Math.min(1,(h*.15-r.bottom)/(h*.4)));const d=Math.max(incoming,outgoing);s.style.opacity=String(1-d*.4);s.style.filter='blur('+(d*3).toFixed(2)+'px)';s.style.transform='translateY('+(incoming*40-outgoing*12)+'px)';if(s.contains(document.activeElement)){s.style.opacity='1';s.style.filter='none';s.style.transform='none'}})}
 function request(){if(!pending){pending=true;requestAnimationFrame(paint)}}
 addEventListener('scroll',request,{passive:true});addEventListener('resize',request,{passive:true});document.addEventListener('focusin',request);motion.addEventListener('change',request);
-// Threshold stepping only on short desktop About sections. Long content and touch stay native.
+// Native scrolling while the gesture is active; settle only after a pause.
+let gesture=null,settleTimer=0,animationUntil=0;
+function metrics(){return sections.map(s=>{const old=s.style.transform;s.style.transform='none';const r=s.getBoundingClientRect();s.style.transform=old;return {top:r.top+scrollY,height:r.height}})}
+function nearest(ps,y){let i=0;ps.forEach((p,k)=>{if(Math.abs(p.top-32-y)<Math.abs(ps[i].top-32-y))i=k});return i}
+function settle(){
+ if(!gesture)return;const g=gesture;gesture=null;
+ if(!desktop.matches||!motion.matches||performance.now()<animationUntil)return;
+ const ps=metrics(),h=innerHeight,p=ps[g.index];if(!p||p.height>h*.92)return;
+ const delta=scrollY-g.y,dir=Math.sign(delta);if(!dir)return;
+ const target=g.index+dir;
+ // Leave the first/last section naturally; never trap the page header or footer.
+ if(target<0||target>=ps.length)return;
+ const distance=Math.abs(ps[target].top-p.top);
+ const moved=Math.abs(delta);
+ const passed=moved>=distance*.5;
+ const fast=g.peak>.85&&moved>Math.min(80,distance*.12);
+ const index=(passed||fast)?target:g.index;
+ animationUntil=performance.now()+900;
+ scrollTo({top:Math.max(0,ps[index].top-32),behavior:'smooth'});
+}
 addEventListener('wheel',e=>{
-if(!about||!desktop.matches||!motion.matches||e.ctrlKey||e.metaKey||Math.abs(e.deltaX)>Math.abs(e.deltaY)||!e.deltaY)return;
-if(e.target.closest('input,textarea,select,pre,[contenteditable="true"],dialog'))return;
-const y=scrollY,h=innerHeight;const positions=sections.map(s=>{const old=s.style.transform;s.style.transform='none';const r=s.getBoundingClientRect();s.style.transform=old;return {top:r.top+y,height:r.height}});
-let i=0;positions.forEach((p,k)=>{if(Math.abs(p.top-32-y)<Math.abs(positions[i].top-32-y))i=k});
-const p=positions[i],dir=Math.sign(e.deltaY),target=i+dir,now=performance.now();
-if(p.height>h*.92||Math.abs(p.top-32-y)>h*.32)return;
-if(target<0||target>=sections.length)return;
-e.preventDefault();if(now<lockedUntil)return;
-if(now-last>220||dir!==sign)total=0;last=now;sign=dir;
-const scale=e.deltaMode===1?16:e.deltaMode===2?h:1;total+=Math.abs(e.deltaY)*scale;
-if(total<120)return;total=0;lockedUntil=now+1000;
-scrollTo({top:Math.max(0,positions[target].top-32),behavior:'smooth'});
-},{passive:false});paint();
+ if(!desktop.matches||!motion.matches||e.ctrlKey||e.metaKey||Math.abs(e.deltaX)>Math.abs(e.deltaY)||!e.deltaY)return;
+ if(e.target.closest('input,textarea,select,pre,[contenteditable="true"],dialog'))return;
+ const now=performance.now();if(now<animationUntil){animationUntil=0;gesture=null}
+ const ps=metrics(),h=innerHeight;
+ if(!gesture){const i=nearest(ps,scrollY);if(ps[i].height>h*.92||Math.abs(ps[i].top-32-scrollY)>h*.35)return;
+ if((i===0&&e.deltaY<0)||(i===ps.length-1&&e.deltaY>0))return;
+ gesture={index:i,y:scrollY,last:now,peak:0}}
+ const scale=e.deltaMode===1?16:e.deltaMode===2?h:1;
+ const dt=Math.max(16,now-gesture.last);gesture.peak=Math.max(gesture.peak,Math.abs(e.deltaY)*scale/dt);gesture.last=now;
+ clearTimeout(settleTimer);settleTimer=setTimeout(settle,220);
+},{passive:true});
+addEventListener('keydown',()=>{gesture=null;clearTimeout(settleTimer)});
+addEventListener('touchstart',()=>{gesture=null;clearTimeout(settleTimer)},{passive:true});
+paint();
 };if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start()})();
 </script>
 {{ end }}
