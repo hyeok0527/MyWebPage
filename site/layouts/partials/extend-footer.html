@@ -25,18 +25,25 @@ const nodes=Array.from(body.childNodes),sections=[];if(!nodes.some(n=>n.nodeType
 let current=null;nodes.forEach(n=>{if(n.nodeType===1&&n.tagName==='H2'){current=document.createElement('section');current.className='ppt-section';body.insertBefore(current,n);sections.push(current)}if(current)current.appendChild(n)});
 body.classList.add('ppt-content');body.classList.add('ppt-about');
 const motion=matchMedia('(prefers-reduced-motion:no-preference)'),desktop=matchMedia('(min-width:900px)');
-let pending=false,lockedUntil=0,total=0,last=0,sign=0;
+let pending=false;
 function paint(){pending=false;const h=innerHeight;sections.forEach(s=>{if(!motion.matches){s.style.opacity='';s.style.filter='';s.style.transform='';return}const old=s.style.transform;s.style.transform='none';const r=s.getBoundingClientRect();s.style.transform=old;const incoming=Math.max(0,Math.min(1,(r.top-h*.3)/(h*.65)));const outgoing=Math.max(0,Math.min(1,(h*.15-r.bottom)/(h*.4)));const d=Math.max(incoming,outgoing);s.style.opacity=String(1-d*.4);s.style.filter='blur('+(d*3).toFixed(2)+'px)';s.style.transform='translateY('+(incoming*40-outgoing*12)+'px)';if(s.contains(document.activeElement)){s.style.opacity='1';s.style.filter='none';s.style.transform='none'}})}
 function request(){if(!pending){pending=true;requestAnimationFrame(paint)}}
 addEventListener('scroll',request,{passive:true});addEventListener('resize',request,{passive:true});document.addEventListener('focusin',request);motion.addEventListener('change',request);
 // Native scrolling while the gesture is active; settle only after a pause.
 let gesture=null,settleTimer=0,animationUntil=0;
+function cancelGesture(){gesture=null;clearTimeout(settleTimer);settleTimer=0}
+// The title/header and footer are always outside the snap area.
+function outsideSnapArea(ps,y){
+ if(!ps.length)return true;
+ const first=Math.max(0,ps[0].top-32),last=Math.max(0,ps[ps.length-1].top-32);
+ return y<=4||y<first-4||y>last+4;
+}
 function metrics(){return sections.map(s=>{const old=s.style.transform;s.style.transform='none';const r=s.getBoundingClientRect();s.style.transform=old;return {top:r.top+scrollY,height:r.height}})}
 function nearest(ps,y){let i=0;ps.forEach((p,k)=>{if(Math.abs(p.top-32-y)<Math.abs(ps[i].top-32-y))i=k});return i}
 function settle(){
  if(!gesture)return;const g=gesture;gesture=null;
  if(!desktop.matches||!motion.matches||performance.now()<animationUntil)return;
- const ps=metrics(),h=innerHeight,p=ps[g.index];if(!p||p.height>h*.92)return;
+ const ps=metrics(),h=innerHeight,p=ps[g.index];if(outsideSnapArea(ps,scrollY)||!p||p.height>h*.92)return;
  const delta=scrollY-g.y,dir=Math.sign(delta);if(!dir)return;
  const target=g.index+dir;
  // Leave the first/last section naturally; never trap the page header or footer.
@@ -52,8 +59,9 @@ function settle(){
 addEventListener('wheel',e=>{
  if(!desktop.matches||!motion.matches||e.ctrlKey||e.metaKey||Math.abs(e.deltaX)>Math.abs(e.deltaY)||!e.deltaY)return;
  if(e.target.closest('input,textarea,select,pre,[contenteditable="true"],dialog'))return;
- const now=performance.now();if(now<animationUntil){animationUntil=0;gesture=null}
+ const now=performance.now();if(now<animationUntil){animationUntil=0;cancelGesture()}
  const ps=metrics(),h=innerHeight;
+ if(outsideSnapArea(ps,scrollY)){cancelGesture();return}
  if(!gesture){const i=nearest(ps,scrollY);if(ps[i].height>h*.92||Math.abs(ps[i].top-32-scrollY)>h*.35)return;
  if((i===0&&e.deltaY<0)||(i===ps.length-1&&e.deltaY>0))return;
  gesture={index:i,y:scrollY,last:now,peak:0}}
@@ -61,8 +69,16 @@ addEventListener('wheel',e=>{
  const dt=Math.max(16,now-gesture.last);gesture.peak=Math.max(gesture.peak,Math.abs(e.deltaY)*scale/dt);gesture.last=now;
  clearTimeout(settleTimer);settleTimer=setTimeout(settle,220);
 },{passive:true});
-addEventListener('keydown',()=>{gesture=null;clearTimeout(settleTimer)});
-addEventListener('touchstart',()=>{gesture=null;clearTimeout(settleTimer)},{passive:true});
+// Cancel stale wheel settlement for keyboard, links, back-to-top and scrollbar use.
+addEventListener('keydown',cancelGesture);
+addEventListener('pointerdown',cancelGesture,{passive:true});
+addEventListener('click',cancelGesture,{capture:true,passive:true});
+addEventListener('touchstart',cancelGesture,{passive:true});
+addEventListener('scroll',()=>{if(gesture&&outsideSnapArea(metrics(),scrollY))cancelGesture()},{passive:true});
+addEventListener('resize',cancelGesture,{passive:true});
+addEventListener('hashchange',cancelGesture);
+addEventListener('pagehide',cancelGesture);
+[desktop,motion].forEach(q=>q.addEventListener('change',cancelGesture));
 paint();
 };if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start()})();
 </script>
