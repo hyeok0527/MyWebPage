@@ -1,4 +1,4 @@
-{{ if and .IsPage (or (eq .Section "projects") (eq .Section "about")) }}
+{{ if .IsPage }}
 <style>
 .article-content.ppt-content>.ppt-section{min-height:70svh;padding:clamp(2rem,7vh,5rem) 0;box-sizing:border-box;scroll-margin-top:100px}
 .article-content.ppt-content>.ppt-section>h2:first-child{margin-top:0}
@@ -7,11 +7,28 @@
 }
 @media(max-width:899px){.article-content.ppt-content>.ppt-section{min-height:0;padding:2rem 0}}
 @media print{.article-content.ppt-content>.ppt-section{min-height:0!important;filter:none!important;opacity:1!important;transform:none!important;padding:1rem 0!important}}
+
+/* Fluid reading sizes: preserve natural height for long paragraphs. */
+.article-content.ppt-content{font-size:clamp(1.0625rem,.97rem + .42vw,1.25rem);line-height:1.85;overflow-wrap:anywhere}
+.article-content.ppt-content h2{font-size:clamp(1.6rem,1.15rem + 1.6vw,2.5rem);line-height:1.35}
+.article-content.ppt-content h3{font-size:clamp(1.25rem,1.05rem + .65vw,1.65rem);line-height:1.45}
+.article-content.ppt-about{font-size:clamp(1.125rem,1rem + .6vw,1.45rem);max-width:40em}
+.article-content.ppt-about>.ppt-section{min-height:78svh;display:flex;flex-direction:column;justify-content:center;padding:clamp(1.75rem,6vh,4.5rem) 0;scroll-margin-top:2rem}
+.article-content.ppt-about>.ppt-section>p,.article-content.ppt-about>.ppt-section>ul{margin-block:.65em}
+.article-content.ppt-content img{max-width:100%;height:auto}
+.article-content.ppt-content pre{max-width:100%;overflow-x:auto}
+@media(max-width:599px){
+ .article-content.ppt-about>.ppt-section{min-height:68svh;padding:2rem 0}
+ .article-content.ppt-about{line-height:1.8}
+}
+@media print{.article-content.ppt-about>.ppt-section{display:block;min-height:0!important}}
 </style>
 <script>
 (()=>{
 const start=()=>{
  const body=document.querySelector('.article-content');if(!body)return;
+ if(/\/about(?:\/|$)/.test(location.pathname))body.classList.add('ppt-about');
+ if(body.classList.contains('ppt-content'))return;
  const nodes=Array.from(body.childNodes);if(!nodes.some(n=>n.nodeType===1&&n.tagName==='H2'))return;
  let section=null;const sections=[];
  nodes.forEach(node=>{
