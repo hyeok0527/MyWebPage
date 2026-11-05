@@ -41,7 +41,7 @@ smartTOCHideUnfocusedChildren = false
 fingerprintAlgorithm = "sha512" # Valid values are "sha512" (default), "sha384", "sha256"
 
 [header]
-  layout = "floating" # valid options: basic, fixed, fixed-fill, fixed-gradient, fixed-fill-blur, floating
+  layout = "basic" # valid options: basic, fixed, fixed-fill, fixed-gradient, fixed-fill-blur, floating
   mobileMenuStyle = "dropdown" # valid options: fullscreen, dropdown
 
 [footer]
@@ -86,7 +86,7 @@ fingerprintAlgorithm = "sha512" # Valid values are "sha512" (default), "sha384",
   showPagination = true
   invertPagination = false
   showReadingTime = false
-  showReadingProgress = true
+  showReadingProgress = false
   showTableOfContents = true
   showRelatedContent = false
   relatedContentLimit = 9

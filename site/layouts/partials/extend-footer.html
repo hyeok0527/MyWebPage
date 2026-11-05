@@ -2,7 +2,7 @@
 <style>
 .article-content.ppt-content>.ppt-section{min-height:70svh;padding:clamp(2rem,7vh,5rem) 0;box-sizing:border-box;scroll-margin-top:100px}
 .article-content.ppt-content>.ppt-section>h2:first-child{margin-top:0}
-@media(min-width:900px) and (prefers-reduced-motion:no-preference){
+@media (prefers-reduced-motion:no-preference){
 .ppt-content.ppt-active>.ppt-section{will-change:transform,opacity,filter}
 }
 @media(max-width:899px){.article-content.ppt-content>.ppt-section{min-height:0;padding:2rem 0}}
@@ -22,14 +22,14 @@ const start=()=>{
   if(section)section.appendChild(node);
  });
  body.classList.add('ppt-content');
- const media=matchMedia('(min-width:900px) and (prefers-reduced-motion:no-preference)');
+ const media=matchMedia('(prefers-reduced-motion:no-preference)');
  let queued=false;
  function paint(){
   queued=false;
   if(!media.matches){body.classList.remove('ppt-active');sections.forEach(s=>{s.style.opacity='';s.style.filter='';s.style.transform=''});return}
   body.classList.add('ppt-active');const h=innerHeight;
   sections.forEach(s=>{
-   const r=s.getBoundingClientRect();
+   const old=s.style.transform;s.style.transform='none';const r=s.getBoundingClientRect();s.style.transform=old;
    // Incoming section rises and sharpens; outgoing section gently blurs.
    const incoming=Math.max(0,Math.min(1,(r.top-h*.18)/(h*.72)));
    const outgoing=Math.max(0,Math.min(1,(h*.22-r.bottom)/(h*.45)));
