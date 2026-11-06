@@ -26,13 +26,31 @@
 @media(prefers-reduced-motion:no-preference){html:has(.pf-home){scroll-behavior:smooth}.pf-animate{opacity:0;transform:translateY(50px);transition:opacity .9s ease,transform .9s cubic-bezier(.22,1,.36,1)}.pf-animate.pf-visible{opacity:1;transform:none}}
 @media(prefers-reduced-motion:reduce){html:has(.pf-home){scroll-snap-type:none;scroll-behavior:auto}.pf-card,.pf-arrow{transition:none!important}.pf-card:hover,.pf-card:focus-visible{transform:none}}
 @media print{.pf-slide{min-height:auto;padding:2rem 0}.pf-animate{opacity:1!important;transform:none!important}}
+
+/* Profile link only: unrelated to text selection rules. */
+.pf-instagram{position:relative;display:block;width:100%;max-width:260px;aspect-ratio:1;border-radius:50%;color:#fff;text-decoration:none!important;box-shadow:0 18px 65px rgba(0,0,0,.18)}
+.pf-instagram .pf-photo{display:block;width:100%;height:100%;box-shadow:none}
+.pf-instagram-label{position:absolute;inset:0;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.45rem;background:rgba(12,18,28,.65);color:#fff;opacity:0;transition:opacity .25s ease;text-align:center;font-size:1rem;font-weight:700}
+.pf-instagram-label small{font-size:.8rem;font-weight:400}
+.pf-instagram:hover .pf-instagram-label,.pf-instagram:focus-visible .pf-instagram-label{opacity:1}
+.pf-instagram:focus-visible{outline:3px solid #818cf8;outline-offset:6px}
+.pf-instagram-mobile{display:none}
+@media(max-width:768px){.pf-instagram{width:160px}}
+@media(hover:none),(pointer:coarse){.pf-instagram-mobile{display:block;font-size:.85rem;margin:.7rem 0 0;text-align:center}.pf-instagram-wrap{width:fit-content}.pf-instagram-label{transition:none}}
+@media(prefers-reduced-motion:reduce){.pf-instagram-label{transition:none}}
 </style>
 <div class="pf-home">
 <section class="pf-slide" id="intro" aria-labelledby="pf-title">
 <div class="pf-hero">
 {{ $photo := false }}
 {{ with .Site.Params.author.image }}{{ if not (or (strings.HasPrefix . "http://") (strings.HasPrefix . "https://")) }}{{ with resources.Get . }}{{ $photo = . }}{{ end }}{{ end }}{{ end }}
+<div class="pf-instagram-wrap">
+<a class="pf-instagram" href="https://www.instagram.com/gwonhyeok123/" target="_blank" rel="noopener noreferrer" aria-label="권혁의 Instagram @gwonhyeok123 방문 (새 탭)">
 {{ if $photo }}<img class="pf-photo" src="{{ $photo.RelPermalink }}" alt="{{ .Site.Params.author.name }}의 프로필 사진" width="260" height="260" fetchpriority="high">{{ else }}<div class="pf-photo pf-monogram" role="img" aria-label="프로필 이미지 대신 표시한 이니셜">H</div>{{ end }}
+<span class="pf-instagram-label" aria-hidden="true">Instagram 방문 ↗<small>@gwonhyeok123</small></span>
+</a>
+<p class="pf-instagram-mobile" aria-hidden="true">사진을 누르면 Instagram으로 이동 ↗</p>
+</div>
 <div><p class="pf-eyebrow">Portfolio / Introduction</p><h1 id="pf-title">안녕하세요,<br>권혁입니다.</h1><p class="pf-lead">전북대학교 컴퓨터인공지능학부에 재학 중입니다.<br>배운 내용을 직접 구현하며, 프로젝트와 문제 해결 과정을 기록합니다.</p><a class="pf-hint" href="#interests">아래로 스크롤하여 더 알아보기 ↓</a></div>
 </div>
 </section>
