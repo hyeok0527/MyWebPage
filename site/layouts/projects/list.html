@@ -1,0 +1,38 @@
+{{ define "main" }}
+<style>
+.project-gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.5rem;margin:2rem 0 3rem}
+.project-tile{position:relative;display:block;aspect-ratio:16/10;overflow:hidden;border-radius:18px;background:linear-gradient(135deg,#263748,#14232f);isolation:isolate;color:#fff;text-decoration:none;box-shadow:0 8px 25px rgb(0 0 0/.1)}
+.project-tile img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .45s ease}
+.project-tile__shade{position:absolute;inset:0;background:rgb(9 17 25/.68);opacity:0;transition:opacity .3s ease;z-index:1}
+.project-tile__caption{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:clamp(1.2rem,3vw,2.2rem);z-index:2;opacity:0;transform:translateY(10px);transition:opacity .3s ease,transform .3s ease}
+.project-tile h2{font-size:clamp(1.2rem,2.2vw,1.8rem);font-weight:750;line-height:1.4;color:#fff;margin:0;overflow-wrap:anywhere;text-wrap:balance}
+.project-tile__label{font-size:.78rem;letter-spacing:.16em;margin-bottom:.7rem;color:#fff}
+.project-tile__hint{font-size:.88rem;margin-top:1rem;color:#fff}
+.project-tile:hover .project-tile__shade,.project-tile:focus-visible .project-tile__shade{opacity:1}
+.project-tile:hover .project-tile__caption,.project-tile:focus-visible .project-tile__caption{opacity:1;transform:none}
+.project-tile:hover img,.project-tile:focus-visible img{transform:scale(1.04)}
+.project-tile:focus-visible{outline:3px solid #38bdf8;outline-offset:5px}
+.project-tile--noimage .project-tile__caption{opacity:1;transform:none}
+@media(max-width:640px){.project-gallery{grid-template-columns:minmax(0,1fr);gap:1rem}}
+@media(hover:none),(pointer:coarse){.project-tile__caption{opacity:1;transform:none;justify-content:flex-end}.project-tile__shade{opacity:1;background:linear-gradient(transparent, rgb(9 17 25/.92))}}
+@media(prefers-reduced-motion:reduce){.project-tile img,.project-tile__shade,.project-tile__caption{transition:none;transform:none!important}}
+</style>
+<header><h1 class="mt-5 text-4xl font-extrabold">{{ .Title }}</h1></header>
+<div class="prose dark:prose-invert mt-6">{{ .Content }}</div>
+<section class="project-gallery" aria-label="프로젝트 목록">
+{{ range (.Paginate .RegularPages.ByWeight).Pages }}
+  {{ $cover := .Resources.GetMatch "cover.*" }}
+  {{ if not $cover }}{{ $cover = .Resources.GetMatch "*feature*" }}{{ end }}
+  <a class="project-tile{{ if not $cover }} project-tile--noimage{{ end }}" href="{{ .RelPermalink }}">
+    {{ with $cover }}<img src="{{ .RelPermalink }}" alt="" loading="lazy" decoding="async">{{ end }}
+    <span class="project-tile__shade" aria-hidden="true"></span>
+    <div class="project-tile__caption">
+      <span class="project-tile__label" aria-hidden="true">PROJECT</span>
+      <h2>{{ .Title }}</h2>
+      <span class="project-tile__hint" aria-hidden="true">자세히 보기 →</span>
+    </div>
+  </a>
+{{ end }}
+</section>
+{{ partial "pagination.html" . }}
+{{ end }}
