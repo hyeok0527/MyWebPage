@@ -37,9 +37,9 @@ API 연결을 설정하고 실제 TMDB와 연동되는지 확인했습니다.
 실제 TMDB API와 웹페이지가 연동되는 것을 확인했습니다.
 
 - [소스 저장소](https://github.com/hyeok0527/movie-lab-action)
-![API 입력전](api1.png)
+![API 입력전](../img/api1.png)
 *API 입력전 정상 배포 확인*
-![API 입력후 연결 확인](api3.png)
+![API 입력후 연결 확인](../img/api3.png)
 *API 입력후 TMDB와 연동 확인*
 
 ## 6. 배운 점과 개선 방향
