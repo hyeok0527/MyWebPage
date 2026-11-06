@@ -85,56 +85,8 @@ addEventListener('load',refreshMetrics,{once:true});
 body.querySelectorAll('img').forEach(img=>{if(!img.complete)img.addEventListener('load',scheduleMeasure,{once:true})});
 if(document.fonts)document.fonts.ready.then(refreshMetrics);
 if(typeof ResizeObserver!=='undefined')new ResizeObserver(scheduleMeasure).observe(body);
-// Native scrolling while the gesture is active; settle only after a pause.
-let gesture=null,settleTimer=0,animationUntil=0;
-function cancelGesture(){gesture=null;clearTimeout(settleTimer);settleTimer=0;animationUntil=0}
-// The title/header and footer are always outside the snap area.
-function outsideSnapArea(ps,y){
- if(!ps.length)return true;
- const first=Math.max(0,ps[0].top-32),last=Math.max(0,ps[ps.length-1].top-32);
- return y<=4||y<first-4||y>last+4;
-}
-function metrics(){return cached}
-function nearest(ps,y){let i=0;ps.forEach((p,k)=>{if(Math.abs(p.top-32-y)<Math.abs(ps[i].top-32-y))i=k});return i}
-function settle(){
- if(!gesture)return;const g=gesture;gesture=null;
- if(!desktop.matches||!motion.matches||performance.now()<animationUntil)return;
- const ps=metrics(),h=innerHeight,p=ps[g.index];if(outsideSnapArea(ps,scrollY)||!p||p.height>h*.92)return;
- const delta=scrollY-g.y,dir=Math.sign(delta);if(!dir)return;
- const target=g.index+dir;
- // Leave the first/last section naturally; never trap the page header or footer.
- if(target<0||target>=ps.length)return;
- const distance=Math.abs(ps[target].top-p.top);
- const moved=Math.abs(delta);
- const passed=moved>=distance*.5;
- const fast=g.peak>.85&&moved>Math.min(80,distance*.12);
- const index=(passed||fast)?target:g.index;
- animationUntil=performance.now()+900;
- scrollTo({top:Math.max(0,ps[index].top-32),behavior:'smooth'});
-}
-addEventListener('wheel',e=>{
- if(!desktop.matches||!motion.matches||e.ctrlKey||e.metaKey||Math.abs(e.deltaX)>Math.abs(e.deltaY)||!e.deltaY)return;
- if(e.target.closest('input,textarea,select,pre,[contenteditable="true"],dialog'))return;
- const now=performance.now();if(now<animationUntil)return;
- const ps=metrics(),h=innerHeight;
- if(outsideSnapArea(ps,scrollY)){cancelGesture();return}
- if(!gesture){const i=nearest(ps,scrollY);if(ps[i].height>h*.92||Math.abs(ps[i].top-32-scrollY)>h*.35)return;
- if((i===0&&e.deltaY<0)||(i===ps.length-1&&e.deltaY>0))return;
- gesture={index:i,y:scrollY,last:now,peak:0}}
- const scale=e.deltaMode===1?16:e.deltaMode===2?h:1;
- const dt=Math.max(16,now-gesture.last);gesture.peak=Math.max(gesture.peak,Math.abs(e.deltaY)*scale/dt);gesture.last=now;
- clearTimeout(settleTimer);settleTimer=setTimeout(settle,220);
-},{passive:true});
-// Cancel stale wheel settlement for keyboard, links, back-to-top and scrollbar use.
-addEventListener('keydown',cancelGesture);
-addEventListener('pointerdown',cancelGesture,{passive:true});
-addEventListener('click',cancelGesture,{capture:true,passive:true});
-addEventListener('touchstart',cancelGesture,{passive:true});
-addEventListener('scroll',()=>{if(gesture&&outsideSnapArea(metrics(),scrollY))cancelGesture()},{passive:true});
-addEventListener('resize',cancelGesture,{passive:true});
-addEventListener('hashchange',cancelGesture);
-addEventListener('pagehide',cancelGesture);
-[desktop,motion].forEach(q=>q.addEventListener('change',cancelGesture));
+// Keep wheel and trackpad scrolling native. No delayed scrollTo settlement:
+// momentum must never be reversed by a timer after a fast gesture.
 refreshMetrics();
 };if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start()})();
 </script>
