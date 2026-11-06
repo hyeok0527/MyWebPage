@@ -10,25 +10,15 @@
 .article-content.ppt-content li{margin-block:.1em}
 .article-content.ppt-content ul,.article-content.ppt-content ol{margin-block:.3em}
 .article-content.ppt-content h3{margin-top:.9em;margin-bottom:.35em}
-.article-content.ppt-about{font-size:clamp(1.125rem,1rem + .5vw,1.4rem);line-height:1.55}
-.article-content.ppt-about>.ppt-section{min-height:62svh;display:flex;flex-direction:column;justify-content:center;padding:1rem 0}
 .ppt-section>*{max-width:100%}
 .ppt-section pre{overflow-x:auto}
-@media(max-width:899px){.article-content.ppt-about>.ppt-section{min-height:0;padding:1rem 0}}
 @media print{.article-content.ppt-content>.ppt-section{min-height:0!important;display:block;filter:none!important;opacity:1!important;transform:none!important}}
 @media(prefers-reduced-motion:no-preference){
 html.pf-detail-smooth{scroll-behavior:smooth}
 .ppt-section{transition:opacity .22s ease-out;}
 }
 @media(prefers-reduced-motion:reduce){html.pf-detail-smooth{scroll-behavior:auto}.ppt-section{transition:none}}
-/* About-only compact prose; leave project typography untouched. */
-.article-content.ppt-about{line-height:1.48}
-.article-content.ppt-about p{margin-block:.22em}
-.article-content.ppt-about li{margin-block:.08em}
-.article-content.ppt-about ul,.article-content.ppt-about ol{margin-block:.25em}
-.article-content.ppt-about>.ppt-section{min-height:0;padding:1.1rem 0;display:block}
-@media(prefers-reduced-motion:reduce),(max-width:899px){.article-content.ppt-about>.ppt-section{filter:none!important}}
-@media print{.article-content.ppt-about>.ppt-section{filter:none!important}}
+/* Shared project typography for all detail pages. */
 </style>
 <script>
 (()=>{const start=()=>{
@@ -36,7 +26,7 @@ const body=document.querySelector('.article-content');if(!body||body.classList.c
 const about=/\/about(?:\/|$)/.test(location.pathname);const project=/\/projects\//.test(location.pathname);if(!about&&!project)return;
 const nodes=Array.from(body.childNodes),sections=[];if(!nodes.some(n=>n.nodeType===1&&n.tagName==='H2'))return;
 let current=null;nodes.forEach(n=>{if(n.nodeType===1&&n.tagName==='H2'){current=document.createElement('section');current.className='ppt-section';body.insertBefore(current,n);sections.push(current)}if(current)current.appendChild(n)});
-body.classList.add('ppt-content');if(about)body.classList.add('ppt-about');
+body.classList.add('ppt-content');
 document.documentElement.classList.add('pf-detail-smooth');
 const motion=matchMedia('(prefers-reduced-motion:no-preference)'),desktop=matchMedia('(min-width:900px)');
 // Cache layout measurements; never interleave writes and reads on scroll.
