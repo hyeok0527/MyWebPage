@@ -1,0 +1,9 @@
+{{/* Independent opt-in: remove this file to restore normal selection. */}}
+<style id="portfolio-selection-policy">
+body { -webkit-user-select: none; user-select: none; }
+input, textarea, select, pre, code, [contenteditable]:not([contenteditable="false"]), [role="textbox"], .allow-select,
+pre *, code *, [contenteditable]:not([contenteditable="false"]) *, [role="textbox"] *, .allow-select * {
+  -webkit-user-select: text; user-select: text;
+}
+@media print { body, body * { -webkit-user-select: text; user-select: text; } }
+</style>
