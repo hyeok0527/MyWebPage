@@ -43,7 +43,7 @@ draft: false
 
 전체 11위를 기록했으며, 5문제 중 2문제를 해결했습니다.
 
-![JBNUPC 대회 기록](award.png)
+![JBNUPC 대회 기록](../img/award.png)
 
 ## 6. 배운 점과 이후 계획
 

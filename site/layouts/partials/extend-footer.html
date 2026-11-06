@@ -1,17 +1,17 @@
 {{ if .IsPage }}
 <style>
-.article-content.ppt-content p{margin-block:.6em}
+.article-content.ppt-content p{margin-block:.45em}
 
-.article-content.ppt-content{font-size:clamp(1.05rem,1rem + .3vw,1.2rem);line-height:1.7;overflow-wrap:anywhere}
+.article-content.ppt-content{font-size:clamp(1.05rem,1rem + .3vw,1.2rem);line-height:1.6;overflow-wrap:anywhere}
 .article-content.ppt-content>.ppt-section{padding:1.5rem 0;scroll-margin-top:2rem}
 .article-content.ppt-content>.ppt-section+ .ppt-section{border-top:1px solid rgba(148,163,184,.25)}
 .article-content.ppt-content h2{font-size:clamp(1.5rem,1.2rem + 1vw,2rem);line-height:1.35;margin:0 0 .8em}
-.article-content.ppt-content p{margin-block:.7em}
-.article-content.ppt-content li{margin-block:.25em}
-.article-content.ppt-content ul,.article-content.ppt-content ol{margin-block:.7em}
+.article-content.ppt-content p{margin-block:.45em}
+.article-content.ppt-content li{margin-block:.15em}
+.article-content.ppt-content ul,.article-content.ppt-content ol{margin-block:.45em}
 .article-content.ppt-content h3{margin-top:1.25em;margin-bottom:.5em}
-.article-content.ppt-about{font-size:clamp(1.125rem,1rem + .5vw,1.4rem);line-height:1.8}
-.article-content.ppt-about>.ppt-section{min-height:78svh;display:flex;flex-direction:column;justify-content:center;padding:2rem 0}
+.article-content.ppt-about{font-size:clamp(1.125rem,1rem + .5vw,1.4rem);line-height:1.65}
+.article-content.ppt-about>.ppt-section{min-height:78svh;display:flex;flex-direction:column;justify-content:center;padding:1.5rem 0}
 .ppt-section>*{max-width:100%}
 .ppt-section pre{overflow-x:auto}
 @media(max-width:899px){.article-content.ppt-about>.ppt-section{min-height:55svh;padding:1.75rem 0}}
@@ -25,20 +25,53 @@ const nodes=Array.from(body.childNodes),sections=[];if(!nodes.some(n=>n.nodeType
 let current=null;nodes.forEach(n=>{if(n.nodeType===1&&n.tagName==='H2'){current=document.createElement('section');current.className='ppt-section';body.insertBefore(current,n);sections.push(current)}if(current)current.appendChild(n)});
 body.classList.add('ppt-content');body.classList.add('ppt-about');
 const motion=matchMedia('(prefers-reduced-motion:no-preference)'),desktop=matchMedia('(min-width:900px)');
-let pending=false;
-function paint(){pending=false;const h=innerHeight;sections.forEach(s=>{if(!motion.matches){s.style.opacity='';s.style.filter='';s.style.transform='';return}const old=s.style.transform;s.style.transform='none';const r=s.getBoundingClientRect();s.style.transform=old;const incoming=Math.max(0,Math.min(1,(r.top-h*.3)/(h*.65)));const outgoing=Math.max(0,Math.min(1,(h*.15-r.bottom)/(h*.4)));const d=Math.max(incoming,outgoing);s.style.opacity=String(1-d*.4);s.style.filter='blur('+(d*3).toFixed(2)+'px)';s.style.transform='translateY('+(incoming*40-outgoing*12)+'px)';if(s.contains(document.activeElement)){s.style.opacity='1';s.style.filter='none';s.style.transform='none'}})}
+// Cache layout measurements; never interleave writes and reads on scroll.
+let pending=false,cached=[];
+function refreshMetrics(){
+ cached=sections.map(s=>({top:s.offsetTop,height:s.offsetHeight}));
+ // offsetTop can be relative to a positioned parent; rect is measured only here.
+ cached=sections.map(s=>{const r=s.getBoundingClientRect();const shift=Number(s.dataset.shift||0);return {top:r.top+scrollY-shift,height:r.height}});
+ request();
+}
+function paint(){
+ pending=false;const h=innerHeight,y=scrollY;
+ sections.forEach((s,i)=>{
+ const p=cached[i];if(!p)return;
+ let opacity=1,shift=0;
+ if(motion.matches&&!s.contains(document.activeElement)){
+  const top=p.top-y,bottom=top+p.height;
+  const incoming=Math.max(0,Math.min(1,(top-h*.3)/(h*.65)));
+  const outgoing=Math.max(0,Math.min(1,(h*.15-bottom)/(h*.4)));
+  opacity=1-Math.max(incoming,outgoing)*.22;
+  shift=incoming*18-outgoing*6;
+ }
+ const value=opacity.toFixed(3),transform='translateY('+shift.toFixed(2)+'px)';
+ if(s.style.opacity!==value)s.style.opacity=value;
+ if(s.style.transform!==transform)s.style.transform=transform;
+ s.dataset.shift=String(shift);
+ });
+}
 function request(){if(!pending){pending=true;requestAnimationFrame(paint)}}
-addEventListener('scroll',request,{passive:true});addEventListener('resize',request,{passive:true});document.addEventListener('focusin',request);motion.addEventListener('change',request);
+addEventListener('scroll',request,{passive:true});
+document.addEventListener('focusin',request);
+motion.addEventListener('change',request);
+let measureTimer=0;
+function scheduleMeasure(){clearTimeout(measureTimer);measureTimer=setTimeout(refreshMetrics,100)}
+addEventListener('resize',scheduleMeasure,{passive:true});
+addEventListener('load',refreshMetrics,{once:true});
+body.querySelectorAll('img').forEach(img=>{if(!img.complete)img.addEventListener('load',scheduleMeasure,{once:true})});
+if(document.fonts)document.fonts.ready.then(refreshMetrics);
+if(typeof ResizeObserver!=='undefined')new ResizeObserver(scheduleMeasure).observe(body);
 // Native scrolling while the gesture is active; settle only after a pause.
 let gesture=null,settleTimer=0,animationUntil=0;
-function cancelGesture(){gesture=null;clearTimeout(settleTimer);settleTimer=0}
+function cancelGesture(){gesture=null;clearTimeout(settleTimer);settleTimer=0;animationUntil=0}
 // The title/header and footer are always outside the snap area.
 function outsideSnapArea(ps,y){
  if(!ps.length)return true;
  const first=Math.max(0,ps[0].top-32),last=Math.max(0,ps[ps.length-1].top-32);
  return y<=4||y<first-4||y>last+4;
 }
-function metrics(){return sections.map(s=>{const old=s.style.transform;s.style.transform='none';const r=s.getBoundingClientRect();s.style.transform=old;return {top:r.top+scrollY,height:r.height}})}
+function metrics(){return cached}
 function nearest(ps,y){let i=0;ps.forEach((p,k)=>{if(Math.abs(p.top-32-y)<Math.abs(ps[i].top-32-y))i=k});return i}
 function settle(){
  if(!gesture)return;const g=gesture;gesture=null;
@@ -59,7 +92,7 @@ function settle(){
 addEventListener('wheel',e=>{
  if(!desktop.matches||!motion.matches||e.ctrlKey||e.metaKey||Math.abs(e.deltaX)>Math.abs(e.deltaY)||!e.deltaY)return;
  if(e.target.closest('input,textarea,select,pre,[contenteditable="true"],dialog'))return;
- const now=performance.now();if(now<animationUntil){animationUntil=0;cancelGesture()}
+ const now=performance.now();if(now<animationUntil)return;
  const ps=metrics(),h=innerHeight;
  if(outsideSnapArea(ps,scrollY)){cancelGesture();return}
  if(!gesture){const i=nearest(ps,scrollY);if(ps[i].height>h*.92||Math.abs(ps[i].top-32-scrollY)>h*.35)return;
@@ -67,7 +100,7 @@ addEventListener('wheel',e=>{
  gesture={index:i,y:scrollY,last:now,peak:0}}
  const scale=e.deltaMode===1?16:e.deltaMode===2?h:1;
  const dt=Math.max(16,now-gesture.last);gesture.peak=Math.max(gesture.peak,Math.abs(e.deltaY)*scale/dt);gesture.last=now;
- clearTimeout(settleTimer);settleTimer=setTimeout(settle,220);
+ clearTimeout(settleTimer);settleTimer=setTimeout(settle,300);
 },{passive:true});
 // Cancel stale wheel settlement for keyboard, links, back-to-top and scrollbar use.
 addEventListener('keydown',cancelGesture);
@@ -79,7 +112,7 @@ addEventListener('resize',cancelGesture,{passive:true});
 addEventListener('hashchange',cancelGesture);
 addEventListener('pagehide',cancelGesture);
 [desktop,motion].forEach(q=>q.addEventListener('change',cancelGesture));
-paint();
+refreshMetrics();
 };if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start()})();
 </script>
 {{ end }}
