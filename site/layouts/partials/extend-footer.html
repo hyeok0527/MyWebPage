@@ -21,6 +21,14 @@ html.pf-detail-smooth{scroll-behavior:smooth}
 .ppt-section{transition:opacity .22s ease-out;}
 }
 @media(prefers-reduced-motion:reduce){html.pf-detail-smooth{scroll-behavior:auto}.ppt-section{transition:none}}
+/* About-only compact prose; leave project typography untouched. */
+.article-content.ppt-about{line-height:1.48}
+.article-content.ppt-about p{margin-block:.22em}
+.article-content.ppt-about li{margin-block:.08em}
+.article-content.ppt-about ul,.article-content.ppt-about ol{margin-block:.25em}
+.article-content.ppt-about>.ppt-section{min-height:0;padding:1.1rem 0;display:block}
+@media(prefers-reduced-motion:reduce),(max-width:899px){.article-content.ppt-about>.ppt-section{filter:none!important}}
+@media print{.article-content.ppt-about>.ppt-section{filter:none!important}}
 </style>
 <script>
 (()=>{const start=()=>{
@@ -28,7 +36,7 @@ const body=document.querySelector('.article-content');if(!body||body.classList.c
 const about=/\/about(?:\/|$)/.test(location.pathname);const project=/\/projects\//.test(location.pathname);if(!about&&!project)return;
 const nodes=Array.from(body.childNodes),sections=[];if(!nodes.some(n=>n.nodeType===1&&n.tagName==='H2'))return;
 let current=null;nodes.forEach(n=>{if(n.nodeType===1&&n.tagName==='H2'){current=document.createElement('section');current.className='ppt-section';body.insertBefore(current,n);sections.push(current)}if(current)current.appendChild(n)});
-body.classList.add('ppt-content');body.classList.add('ppt-about');
+body.classList.add('ppt-content');if(about)body.classList.add('ppt-about');
 document.documentElement.classList.add('pf-detail-smooth');
 const motion=matchMedia('(prefers-reduced-motion:no-preference)'),desktop=matchMedia('(min-width:900px)');
 // Cache layout measurements; never interleave writes and reads on scroll.
@@ -54,6 +62,15 @@ function paint(){
  const value=opacity.toFixed(3),transform='translateY('+shift.toFixed(2)+'px)';
  if(s.style.opacity!==value)s.style.opacity=value;
  if(s.style.transform!==transform)s.style.transform=transform;
+ // About only: at most 0.65px blur, no overlay and no scroll-time layout reads.
+ let blur=0;
+ if(about&&desktop.matches&&motion.matches&&!s.contains(document.activeElement)){
+  const top=p.top-y,bottom=top+p.height;
+  const distance=top>h*.68?top-h*.68:bottom<h*.32?h*.32-bottom:0;
+  blur=Math.min(.65,distance/(h*.5)*.65);
+ }
+ const filter=blur<.04?'none':'blur('+blur.toFixed(2)+'px)';
+ if(s.style.filter!==filter)s.style.filter=filter;
  s.dataset.shift=String(shift);
  });
 }
