@@ -1,21 +1,26 @@
 {{ if .IsPage }}
 <style>
-.article-content.ppt-content p{margin-block:.45em}
+.article-content.ppt-content p{margin-block:.3em}
 
-.article-content.ppt-content{font-size:clamp(1.05rem,1rem + .3vw,1.2rem);line-height:1.6;overflow-wrap:anywhere}
-.article-content.ppt-content>.ppt-section{padding:1.5rem 0;scroll-margin-top:2rem}
+.article-content.ppt-content{font-size:clamp(1.05rem,1rem + .3vw,1.2rem);line-height:1.5;overflow-wrap:anywhere}
+.article-content.ppt-content>.ppt-section{padding:1rem 0;scroll-margin-top:2rem}
 .article-content.ppt-content>.ppt-section+ .ppt-section{border-top:1px solid rgba(148,163,184,.25)}
-.article-content.ppt-content h2{font-size:clamp(1.5rem,1.2rem + 1vw,2rem);line-height:1.35;margin:0 0 .8em}
-.article-content.ppt-content p{margin-block:.45em}
-.article-content.ppt-content li{margin-block:.15em}
-.article-content.ppt-content ul,.article-content.ppt-content ol{margin-block:.45em}
-.article-content.ppt-content h3{margin-top:1.25em;margin-bottom:.5em}
-.article-content.ppt-about{font-size:clamp(1.125rem,1rem + .5vw,1.4rem);line-height:1.65}
-.article-content.ppt-about>.ppt-section{min-height:78svh;display:flex;flex-direction:column;justify-content:center;padding:1.5rem 0}
+.article-content.ppt-content h2{font-size:clamp(1.5rem,1.2rem + 1vw,2rem);line-height:1.35;margin:0 0 .55em}
+.article-content.ppt-content p{margin-block:.3em}
+.article-content.ppt-content li{margin-block:.1em}
+.article-content.ppt-content ul,.article-content.ppt-content ol{margin-block:.3em}
+.article-content.ppt-content h3{margin-top:.9em;margin-bottom:.35em}
+.article-content.ppt-about{font-size:clamp(1.125rem,1rem + .5vw,1.4rem);line-height:1.55}
+.article-content.ppt-about>.ppt-section{min-height:62svh;display:flex;flex-direction:column;justify-content:center;padding:1rem 0}
 .ppt-section>*{max-width:100%}
 .ppt-section pre{overflow-x:auto}
-@media(max-width:899px){.article-content.ppt-about>.ppt-section{min-height:55svh;padding:1.75rem 0}}
+@media(max-width:899px){.article-content.ppt-about>.ppt-section{min-height:0;padding:1rem 0}}
 @media print{.article-content.ppt-content>.ppt-section{min-height:0!important;display:block;filter:none!important;opacity:1!important;transform:none!important}}
+@media(prefers-reduced-motion:no-preference){
+html.pf-detail-smooth{scroll-behavior:smooth}
+.ppt-section{transition:opacity .22s ease-out;}
+}
+@media(prefers-reduced-motion:reduce){html.pf-detail-smooth{scroll-behavior:auto}.ppt-section{transition:none}}
 </style>
 <script>
 (()=>{const start=()=>{
@@ -24,6 +29,7 @@ const about=/\/about(?:\/|$)/.test(location.pathname);const project=/\/projects\
 const nodes=Array.from(body.childNodes),sections=[];if(!nodes.some(n=>n.nodeType===1&&n.tagName==='H2'))return;
 let current=null;nodes.forEach(n=>{if(n.nodeType===1&&n.tagName==='H2'){current=document.createElement('section');current.className='ppt-section';body.insertBefore(current,n);sections.push(current)}if(current)current.appendChild(n)});
 body.classList.add('ppt-content');body.classList.add('ppt-about');
+document.documentElement.classList.add('pf-detail-smooth');
 const motion=matchMedia('(prefers-reduced-motion:no-preference)'),desktop=matchMedia('(min-width:900px)');
 // Cache layout measurements; never interleave writes and reads on scroll.
 let pending=false,cached=[];
@@ -43,7 +49,7 @@ function paint(){
   const incoming=Math.max(0,Math.min(1,(top-h*.3)/(h*.65)));
   const outgoing=Math.max(0,Math.min(1,(h*.15-bottom)/(h*.4)));
   opacity=1-Math.max(incoming,outgoing)*.22;
-  shift=incoming*18-outgoing*6;
+  shift=incoming*12-outgoing*4;
  }
  const value=opacity.toFixed(3),transform='translateY('+shift.toFixed(2)+'px)';
  if(s.style.opacity!==value)s.style.opacity=value;
@@ -100,7 +106,7 @@ addEventListener('wheel',e=>{
  gesture={index:i,y:scrollY,last:now,peak:0}}
  const scale=e.deltaMode===1?16:e.deltaMode===2?h:1;
  const dt=Math.max(16,now-gesture.last);gesture.peak=Math.max(gesture.peak,Math.abs(e.deltaY)*scale/dt);gesture.last=now;
- clearTimeout(settleTimer);settleTimer=setTimeout(settle,300);
+ clearTimeout(settleTimer);settleTimer=setTimeout(settle,220);
 },{passive:true});
 // Cancel stale wheel settlement for keyboard, links, back-to-top and scrollbar use.
 addEventListener('keydown',cancelGesture);
