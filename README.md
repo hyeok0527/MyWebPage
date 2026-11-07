@@ -96,17 +96,17 @@ GitHub Settings → Pages → Source는 GitHub Actions를 사용합니다.
 
 ### 최종 코드와 배포
 - 기준 브랜치: main
-- 최종 코드 전체 SHA: [git rev-parse HEAD 결과 입력]
-- 커밋 링크: [직접 입력]
-- 해당 커밋의 Actions 실행 링크: [직접 입력]
-- 빌드·배포 결과: 미확인 (최종 실행 확인 후 수정)
+- 최종 코드 전체 SHA: 35711c04a1e40ea23bbcd3e46c37bbbc756cb479
+- 커밋 링크: https://github.com/hyeok0527/MyWebPage/commit/35711c04a1e40ea23bbcd3e46c37bbbc756cb479
+- 해당 커밋의 Actions 실행 링크: https://github.com/hyeok0527/MyWebPage/actions/runs/42219049844
+- 빌드·배포 결과: 성공
 - 공개 사이트: https://hyeok0527.github.io/MyWebPage/
 
 ### 실제 작업 환경
-- 운영체제·버전: [직접 입력]
-- 편집기: [직접 입력]
-- Git 버전: [git --version 결과 입력]
-- 로컬 Hugo 실행 여부·버전: [미사용이면 로컬 미실행으로 기록]
+- 운영체제·버전: MacOS 27.2(26B123)
+- 편집기: Visual Studio Code
+- Git 버전: git version 2.54.0 (Apple Git-157)
+- 로컬 Hugo 실행 여부·버전: 로컬 미실행
 - 배포 방식: GitHub Actions를 통한 Hugo 빌드 및 GitHub Pages 배포
 
 ### 최종 검증
@@ -114,13 +114,37 @@ GitHub Settings → Pages → Source는 GitHub Actions를 사용합니다.
 
 | 영역 | 결과 | 확인할 내용 |
 |---|---|---|
-| 빌드·배포 | 미검증 | 기준 커밋의 Actions 결과 |
+| 빌드·배포 | 정상 | 기준 커밋과 Actions 실행의 SHA 일치 및 전체 실행 성공 확인 |
 | 링크·이미지 | 미검증 | 메뉴, 직접 접속, 새로고침, 대표·본문 이미지 |
 | 반응형 | 미검증 | 실제 기기 또는 개발자 도구 화면 폭 기록 |
 | 키보드 | 미검증 | Tab 초점과 Enter 실행 |
 | 스크롤 | 미검증 | 빠른 스크롤 후 되튐, 최상단 이동 |
 | 언어·확대 | 미검증 | HTML lang, 200% 확대 시 잘림 |
 
-- 검증 일시: [실제 확인 일시, KST]
-- 브라우저·기기: [직접 입력]
-- 남은 문제·미검증 항목: [실제 확인 후 입력]
+- 검증 일시: 2026년 11월 6일 오후 9시 47분 (KST)
+- 브라우저·기기: Safari / MacBook Air M5
+- 남은 문제·미검증 항목: Safari에서 확인한 범위 내 발견된 문제는 없음. 모바일 실제 기기, 다른 브라우저, 키보드 탐색 및 200% 확대는 미검증.
+- 남은 문제·미검증 항목: 스크롤 시 간헐적인 버벅임이 있어 추가 개선이 필요함. 모바일 실제 기기와 다른 브라우저에서의 동작은 미검증.
+
+
+## 설치 후 빌드
+
+저장소 루트(MyWebPage 폴더)에서 실행합니다.
+
+```bash
+python .github/pages_build.py --dependencies
+python .github/pages_build.py --build
+```
+
+기존 배포 스크립트가 `site/pages.json`과 `site/config/` 설정을 사용하며 결과를 `public/`에 만듭니다.
+일부 환경에서 `python` 명령이 없다면 `python3`를 사용하세요.
+
+로컬 확인 명령은 다음과 같습니다. 이 프로젝트에서는 로컬 Hugo 실행을 검증하지 않았으며, 실제 빌드·배포는 GitHub Actions를 사용했습니다.
+
+```bash
+cd site
+hugo server --config pages.json --baseURL http://localhost:1313/MyWebPage/ --appendPort=false
+```
+
+브라우저에서 http://localhost:1313/MyWebPage/ 를 엽니다.
+
