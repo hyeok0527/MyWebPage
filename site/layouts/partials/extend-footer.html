@@ -12,6 +12,8 @@
 .article-content.ppt-content h3{margin-top:.9em;margin-bottom:.35em}
 .ppt-section>*{max-width:100%}
 .ppt-section pre{overflow-x:auto}
+/* Keep keyboard-focused content legible even between animation frames. */
+.article-content.ppt-content>.ppt-section:focus-within{filter:none!important;opacity:1!important;transform:none!important}
 @media print{.article-content.ppt-content>.ppt-section{min-height:0!important;display:block;filter:none!important;opacity:1!important;transform:none!important}}
 @media(prefers-reduced-motion:no-preference){
 html.pf-detail-smooth{scroll-behavior:smooth}
