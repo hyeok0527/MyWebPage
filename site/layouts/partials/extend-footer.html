@@ -74,9 +74,18 @@ let measureTimer=0;
 function scheduleMeasure(){clearTimeout(measureTimer);measureTimer=setTimeout(refreshMetrics,100)}
 addEventListener('resize',scheduleMeasure,{passive:true});
 addEventListener('load',refreshMetrics,{once:true});
-body.querySelectorAll('img').forEach(img=>{if(!img.complete)img.addEventListener('load',scheduleMeasure,{once:true})});
+body.querySelectorAll('img').forEach(img=>{
+ if(!img.complete){
+  img.addEventListener('load',scheduleMeasure,{once:true});
+  img.addEventListener('error',scheduleMeasure,{once:true});
+ }
+});
 if(document.fonts)document.fonts.ready.then(refreshMetrics);
-if(typeof ResizeObserver!=='undefined')new ResizeObserver(scheduleMeasure).observe(body);
+if(typeof ResizeObserver!=='undefined'){
+ const layoutObserver=new ResizeObserver(scheduleMeasure);
+ layoutObserver.observe(body);
+ sections.forEach(section=>layoutObserver.observe(section));
+}
 // Keep wheel and trackpad scrolling native. No delayed scrollTo settlement:
 // momentum must never be reversed by a timer after a fast gesture.
 refreshMetrics();
